@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<makefile>
+
+    <exe id="thread_test">
+        <sources>main.cpp thread_attribute.cpp thread.cpp</sources>
+        <include>../../include</include>
+        <sys-lib>pthread</sys-lib>
+        <debug-info>on</debug-info>
+     </exe>
+
+</makefile>
+
