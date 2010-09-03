@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<makefile>
+    <subproject id="test">
+        <dir>test</dir>
+        <installable>no</installable>
+        <dependency-of>all</dependency-of>
+    </subproject>
+</makefile>
+
