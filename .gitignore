@@ -1,1 +1,4 @@
 Makefile
+*.d
+*.o
+*_test
