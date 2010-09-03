@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<makefile>
+    <exe id="algorithm_test">
+        <sources>main.cpp consthash.cpp</sources>
+        <include>../../include</include>
+        <debug-info>on</debug-info>
+     </exe>
+</makefile>
+

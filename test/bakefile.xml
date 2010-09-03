@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<makefile>
+    <subproject id="thread">
+        <dir>thread</dir>
+        <installable>no</installable>
+        <dependency-of>all</dependency-of>
+    </subproject>
+    <subproject id="algorithm">
+        <dir>algorithm</dir>
+        <installable>no</installable>
+        <dependency-of>all</dependency-of>
+    </subproject>
+</makefile>
+
