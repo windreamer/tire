@@ -4,6 +4,11 @@
         <sources>main.cpp consthash.cpp</sources>
         <include>../../include</include>
         <debug-info>on</debug-info>
-     </exe>
+    </exe>
+    <exe id="benchmark">
+        <sources>benchmark.cpp</sources>
+        <include>../../include</include>
+        <debug-info>on</debug-info>
+    </exe>
 </makefile>
 

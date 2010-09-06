@@ -11,38 +11,43 @@ namespace algorithm
         const_hash(){}
         virtual ~const_hash(){}
 
-        virtual void add (int id, int weight)
+        virtual void add(int id, int w)
         {
-            if(weight >0)
+            if((w + ring.size()) >= RAND_MAX)
+            {
+                throw std::range_error("too many nodes");
+            }
+
+            if(w > 0)
             {
                 id_set.insert(id);
             }
 
-            for (int counter=0; counter<weight;)
+            for(int counter=0; counter<w;)
             {
-                int index = rand();
-                if (ring.insert(std::make_pair(index, id)).second)
+                double index = random();
+                if(ring.insert(std::make_pair(index, id)).second)
                 {
                     counter++;
                 }
             }
         }
 
-        virtual int remove (int id, int weight)
+        virtual int remove(int id, int w)
         {
-            int size = count(id);
+            int current_weight = weight(id);
 
-            weight = std::min(weight, size);
+            w = std::min(w, current_weight);
 
-            for (int counter = 0; counter< weight;)
+            for(int counter = 0; counter< w;)
             {
-                int index = rand();
+                double index = random();
                 ring_type::iterator 
                     begin = ring.lower_bound(index),
                           end = ring.end();
-                if (begin == end)
+                if(begin == end)
                 {
-                    begin = end;
+                    begin = ring.begin();
                 }
 
                 for(ring_type::iterator it = begin; it!=end;
@@ -51,24 +56,25 @@ namespace algorithm
                     if(it->second == id)
                     {
                         ring.erase(it);
-                        --size;
+                        --current_weight;
+                        ++counter;
                         break;
                     }
                 }
             }
-            if(size == 0)
+            if(current_weight == 0)
             {
                 id_set.erase(id);
             }
-            return size;
+            return current_weight;
         }
 
-        virtual void erase (int id)
+        virtual void erase(int id)
         {
             for(ring_type::iterator it = ring.begin();
                     it != ring.end();)
             {
-                if (it->second == id)
+                if(it->second == id)
                 {
                     ring_type::iterator to_erase = it++;
                     ring.erase(to_erase);
@@ -81,32 +87,39 @@ namespace algorithm
             id_set.erase(id);
         }
 
-        virtual int count (int id) const
+        virtual int weight(int id) const
         {
-            int size = 0;
+            int weight = 0;
             for(ring_type::const_iterator it = ring.begin(),
                     end = ring.end(); it != end; ++it)
             {
-                if (it->second == id)
+                if(it->second == id)
                 {
-                    ++size;
+                    ++weight;
                 }
             }
-            return size;
+            return weight;
         }
 
-        virtual int hash (int resource) const
+        virtual int hash(double resource) const
         {
-            if (empty())
+            if(resource < 0 || resource > 1)
             {
-                throw std::domain_error ("empty ring.");
+                throw std::range_error("resource should be between 0" 
+                        "and 1.");
+            }
+
+            if(empty())
+            {
+                throw std::domain_error("empty ring.");
             }
 
             ring_type::const_iterator it = ring.lower_bound(resource);
-            if (it == ring.end())
+            if(it == ring.end())
             {
-                it == ring.begin();
+                it = ring.begin();
             }
+            return it->second;
         }
 
         virtual bool empty() const
@@ -114,12 +127,18 @@ namespace algorithm
             return ring.empty();
         }
 
-        virtual std::set<int> alive_set () const
+        virtual std::set<int> alive_set() const
         {
             return id_set;
         }
+    protected:
+        virtual double random()
+        {
+            double r = rand();
+            return r/RAND_MAX;
+        }
     private:
-        typedef std::map<int ,int> ring_type;
+        typedef std::map<double ,int> ring_type;
         ring_type ring;
 
         std::set<int> id_set;

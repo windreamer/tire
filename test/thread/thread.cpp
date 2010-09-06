@@ -60,6 +60,9 @@ namespace tut
         ensure_not("invalid threads are not unequal", t1 != t2);
         ensure("self compare are equal", t1 == t1);
         ensure_not("self compare are not unequal", t1 != t1);
+        t1=t1;
+        ensure("self compare are equal", t1 == t1);
+        ensure_not("self compare are not unequal", t1 != t1);
         t1 = pthreadxx::thread::create(d);
         ensure_not("threads are unequal", t1 == t2);
         ensure("invalid threads are not equal", t1 != t2);
@@ -77,6 +80,9 @@ namespace tut
         set_test_name("join thread");
         pthreadxx::thread t = pthreadxx::thread::create(d);
         ensure_equals("join return", t.join(), result);
+        pthreadxx::thread t1;
+        ensure_THROW(t1.join(), pthreadxx::invalid_state);
+        ensure_THROW(t.join(), std::invalid_argument);
     }
 
     template<>
@@ -97,6 +103,8 @@ namespace tut
         set_test_name("detach thread");
         pthreadxx::thread t = pthreadxx::thread::create(data());
         ensure_NO_THROW(t.detach());
+        pthreadxx::thread t1;
+        ensure_THROW(t.detach(), pthreadxx::invalid_state);
     }
 }
 
