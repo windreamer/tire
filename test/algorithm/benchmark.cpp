@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
+#include <cmath>
 
 using namespace algorithm;
 using namespace std;
@@ -28,6 +29,31 @@ double frandom ()
 {
     double r = rand();
     return r/RAND_MAX;
+}
+
+double std_deviation (double ratio[], int size)
+{
+    double sum=0;
+    int zero_num = 0;
+    for(int i=0; i < size; ++i)
+    {
+        if (ratio[i] == 0)
+        {
+            ++zero_num;
+            continue;
+        }
+        sum+=ratio[i];
+    }
+    double average = sum/(size-zero_num);
+    sum = 0;
+    for(int i=0; i < size; ++i)
+    {
+        if(ratio[i] != 0)
+        {
+            sum+=((ratio[i]-average)*(ratio[i]-average));
+        }
+    }
+    return sqrt(sum/(size-zero_num));
 }
 
 int main()
@@ -75,13 +101,15 @@ int main()
         cout << endl;
 
         cout<<"hit ratio: ";
+        double ratio[node_num];
         for(int j=0; j<node_num; ++j)
         {
-            double ratio = (count[j]==0?0:((double)count[j]/hash.weight(j)));
-            cout<<name[j]<<"="<<ratio <<" ";
+            ratio[j] = (count[j]==0?0:((double)count[j]/hash.weight(j)));
+            cout<<name[j]<<"="<<ratio[j] <<" ";
         }
         cout << endl;
 
+        cout<<"ratio standard deviation: s="<<std_deviation(ratio, node_num) << endl;
         switch(i)
         {
         case 0:
