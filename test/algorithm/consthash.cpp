@@ -92,7 +92,7 @@ namespace tut
                     hash.hash(random()), 0);
         }
         ensure_THROW(hash.hash(2), std::range_error);
-        ensure_THROW(hash.add(1, RAND_MAX-99), std::range_error);
+        ensure_THROW(hash.add(1, algorithm::const_hash::MAX_NODES-99), std::range_error);
         ensure_equals("node 1 has no weight", hash.weight(1), 0);
         ensure_equals("node 1 not in alive_set", hash.alive_set().count(1), 0);
     }
@@ -244,6 +244,30 @@ namespace tut
         ensure_equals("hash node 0 weight", hash.weight(0), 0);
         ensure_equals("hash node 1 weight", hash.weight(1), 50);
         ensure_equals("hash node 2 weight", hash.weight(2), 0);
+    }
+
+    template<>
+    template<>
+    void fixture::test<7>()
+    {
+        set_test_name("hash algorithm deterministic");
+        algorithm::const_hash hash1, hash2;
+        int nodes = 100;
+        for(int i = 0; i < nodes; ++i)
+        {
+            hash1.add(i, 200);
+        }
+        for(int i = 0; i < nodes; ++i)
+        {
+            hash2.add(i, 200);
+        }
+
+        int loop = 10000;
+        for(int i= 0; i < loop; ++i)
+        {
+            double r = random();
+            ensure_equals(hash1.hash(r), hash2.hash(r));
+        }
     }
 }
 

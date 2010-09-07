@@ -13,7 +13,7 @@ namespace algorithm
 
         virtual void add(int id, int w)
         {
-            if((w + ring.size()) >= RAND_MAX)
+            if((w + ring.size()) >= MAX_NODES)
             {
                 throw std::range_error("too many nodes");
             }
@@ -23,9 +23,10 @@ namespace algorithm
                 id_set.insert(id);
             }
 
-            for(int counter=0; counter<w;)
+            int current_weight = weight(id);
+            for(int counter = 0; counter < w;)
             {
-                double index = random();
+                double index = random(id, current_weight + counter);
                 if(ring.insert(std::make_pair(index, id)).second)
                 {
                     counter++;
@@ -39,9 +40,9 @@ namespace algorithm
 
             w = std::min(w, current_weight);
 
-            for(int counter = 0; counter< w;)
+            for(int counter = 0; counter < w;)
             {
-                double index = random();
+                double index = random(id, current_weight - 1);
                 ring_type::iterator 
                     begin = ring.lower_bound(index),
                           end = ring.end();
@@ -131,11 +132,22 @@ namespace algorithm
         {
             return id_set;
         }
+
+        const static int MAX_NODES = 0x7FFFFFFF;
+
     protected:
-        virtual double random()
+        virtual double random(int x, int y)
         {
-            double r = rand();
-            return r/RAND_MAX;
+            unsigned int a = x * 123456789 + y;
+            a -= (a<<6);
+            a ^= (a>>17);
+            a -= (a<<9);
+            a ^= (a<<4);
+            a -= (a<<3);
+            a ^= (a<<10);
+            a ^= (a>>15);
+            double r = a % MAX_NODES;
+            return r/MAX_NODES;
         }
     private:
         typedef std::map<double ,int> ring_type;
